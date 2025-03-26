@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "332345714212",
+    "project_id": "arindoornavigation-ba570",
+    "storage_bucket": "arindoornavigation-ba570.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332345714212:android:f051fbea056f0f94dbdab1",
+        "android_client_info": {
+          "package_name": "com.unity.template.indoornav"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzFSpdvD_cyCJB-MQ9_Fq_yvPkCvEeIRw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
