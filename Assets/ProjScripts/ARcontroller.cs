@@ -18,13 +18,13 @@ public class ARcontroller : MonoBehaviour
     public ARRaycastManager RaycastManager;
     public ARPointCloudManager PointCloudManager;
     public ARAnchorManager AnchorManager;
+    //public AnchorPlacer placer;
     
 
    //[HideInInspector]
     //public ApplicationState StateofApplication;
 
 
-    public AnchorPlacer placer;
     //public enum ApplicationState
     //{   Initial,
     //    ARsession,

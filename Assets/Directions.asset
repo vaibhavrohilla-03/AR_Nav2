@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d350fa07accfe34aa56399d4a60edc8, type: 3}
+  m_Name: Directions
+  m_EditorClassIdentifier: 
+  Start: {fileID: 2434248831902721366, guid: 5d465eefa5bc1284291ed84ce7798aa5, type: 3}
+  DirectionLeft: {fileID: 7216935916606505887, guid: 93101d16d5a3f7f439a422c8d1db9385,
+    type: 3}
+  DirectionRight: {fileID: 2492073554589601896, guid: bc3f8e4340e981d47a27410a041f69f3,
+    type: 3}
+  DirectionStraight: {fileID: 1460928156419452877, guid: c46a1adcc03c0ac41afc3ae0b88a62b6,
+    type: 3}
+  End: {fileID: 1291482875674553197, guid: e152535e19dd4f94c80ebdadf1129584, type: 3}

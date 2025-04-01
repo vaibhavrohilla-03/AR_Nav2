@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
-  <string name="gcm_defaultSenderId" translatable="false">332345714212</string>
-  <string name="google_storage_bucket" translatable="false">arindoornavigation-ba570.firebasestorage.app</string>
-  <string name="project_id" translatable="false">arindoornavigation-ba570</string>
-  <string name="google_api_key" translatable="false">AIzaSyDzFSpdvD_cyCJB-MQ9_Fq_yvPkCvEeIRw</string>
-  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDzFSpdvD_cyCJB-MQ9_Fq_yvPkCvEeIRw</string>
-  <string name="google_app_id" translatable="false">1:332345714212:android:f051fbea056f0f94dbdab1</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="firebase_database_url" translatable="false">https://arnavigation-2ac89-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+  <string name="gcm_defaultSenderId" translatable="false">700377891496</string>
+  <string name="google_storage_bucket" translatable="false">arnavigation-2ac89.firebasestorage.app</string>
+  <string name="project_id" translatable="false">arnavigation-2ac89</string>
+  <string name="google_api_key" translatable="false">AIzaSyCHgr0UkWr1iSB8tqK1S3zVon5dzPRfPiw</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCHgr0UkWr1iSB8tqK1S3zVon5dzPRfPiw</string>
+  <string name="google_app_id" translatable="false">1:700377891496:android:bf9e44aa9cf6f8b7aeb89d</string>
 </resources>
