@@ -30,6 +30,17 @@ public class Direction
         this.rotation =  new DirectionRotation(rotation);
         return Object.Instantiate(preset.getDirection(DirectionType), position, rotation);
     }
+
+    public GameObject AddintoSceneasChild(Directions preset, Vector3 position, Quaternion rotation, GameObject parent)
+    {
+        GameObject instance = Object.Instantiate(preset.getDirection(DirectionType), position, rotation);
+        instance.transform.SetParent(parent.transform, worldPositionStays: false);
+        this.position = new DirectionPosition(instance.transform.localPosition);
+        this.rotation = new DirectionRotation(instance.transform.localRotation);
+
+        return instance;
+
+    }
 }
 
 [System.Serializable]

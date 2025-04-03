@@ -6,10 +6,10 @@ using ZXing.QrCode;
 public class QRGenerator : MonoBehaviour
 {
 
-    public void MakeQRfromkey(string key)
+    public void MakeQRfromkey(string key, string filename)
     {
         Texture2D QR = generateQR(key); 
-        SaveToGallery(QR);
+        SaveToGallery(QR,filename);
     }
 
 
@@ -36,9 +36,9 @@ public class QRGenerator : MonoBehaviour
         return encoded;
     }
 
-    private void SaveToGallery(Texture2D QR)
+    private void SaveToGallery(Texture2D QR,string QRname)
     {
-        NativeGallery.SaveImageToGallery(QR, "AR navigation", "testQR");
+        NativeGallery.SaveImageToGallery(QR, "AR navigation", QRname);
     }
 
 }

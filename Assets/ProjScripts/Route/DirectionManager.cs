@@ -13,7 +13,7 @@ public class DirectionManager : MonoBehaviour
     private ARcontroller controller;
     [HideInInspector]public ARAnchor anchor;
 
-    [HideInInspector] public UnityEvent OnAddingDirection;
+    
     private void Start()
     {
         controller = ARcontroller.Instance;
@@ -32,16 +32,30 @@ public class DirectionManager : MonoBehaviour
             GameObject directionmodel =  selecteddirection.AddintoScene(directionpresets, position,Quaternion.identity);
             anchor =  directionmodel.AddComponent<ARAnchor>();
             Debug.Log("anchor placed with anchor id" + anchor.trackableId);
-            Router.InitializeRoute("test Route");
-            Router.AddRouteDirections(selecteddirection);
-            OnAddingDirection.Invoke();
+            Router.InitializeRoute("TestNamewill replace with user input");
+            Router.AddRouteDirections(selecteddirection,position);
         }
         else
         {
-           GameObject directionmodel =  selecteddirection.AddintoScene(directionpresets, position,Quaternion.identity);
-           Debug.Log("direction placed of type" + selecteddirection.DirectionType);
-            Router.AddRouteDirections(selecteddirection);
-           OnAddingDirection.Invoke();
+            if (Router.GetCurrentRoute() == null || Router.GetCurrentRoute().directions.Count == 0)
+            {
+                Debug.LogError("Start direction must be placed first.");
+                return;
+            }
+
+            Direction startDirection = Router.GetCurrentRoute().directions[0];
+            GameObject startObject = GameObject.FindWithTag("Start"); 
+            if (startObject == null)
+            {
+                Debug.LogError("Start object not found in scene.");
+                return;
+            }
+
+            GameObject directionmodel = selecteddirection.AddintoSceneasChild(directionpresets, position, Quaternion.identity, startObject);
+            Vector3 relativePosition = startObject.transform.InverseTransformPoint(position);
+
+            Debug.Log("Direction placed relative to start: " + relativePosition);
+            Router.AddRouteDirections(selecteddirection, relativePosition);
         }
     }
 

@@ -33,6 +33,7 @@ public class QRScanner : MonoBehaviour
             {
                 RouteKey = resultText;
                 Debug.Log("resolve initiated" + "with routekey" + RouteKey);
+
                 Anchorresolve.StartResolveAnchor(RouteKey);
                 
                 

@@ -11,7 +11,9 @@ public class FirebaseManager : MonoBehaviour
 
     public MakeRoute Router;
 
-    public UnityEvent OnFirebaseInitialize = new UnityEvent();
+    public Directions directionPresets;
+
+    [HideInInspector]public UnityEvent OnFirebaseInitialize = new UnityEvent();
 
     private void Awake()
     {
@@ -28,7 +30,7 @@ public class FirebaseManager : MonoBehaviour
     private void Start()
     {
         InitializeFirebase();
-        SaveRoute();
+        
     }
 
     public void InitializeFirebase()
@@ -46,19 +48,56 @@ public class FirebaseManager : MonoBehaviour
             OnFirebaseInitialize.Invoke();
         });
     }
-
-
-    public void SaveRoute()
+    public void SaveRoute(string cloudanchorid)
     {
-        Route testRoute = new Route("TestRoute");
-        testRoute.AddDirection(new Direction(DirectionType.Start,Vector3.zero,Quaternion.identity));
-        string json = JsonUtility.ToJson(testRoute);
+        Route route = Router.GetCurrentRoute();
+        string json = JsonUtility.ToJson(route);
         Debug.Log(json);
+        DBReference.Child("Routes").Child(cloudanchorid).SetRawJsonValueAsync(json);
     }
 
-    public void LoadRoute()
+    public void LoadRoute(string cloudanchorid,GameObject resolvedAnchor)
     {
+        DBReference.Child("Routes").Child(cloudanchorid).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompleted && task.Result.Exists)
+            {
+                string json = task.Result.GetRawJsonValue();
+                Route loadedRoute = JsonUtility.FromJson<Route>(json);
 
+                if (resolvedAnchor == null)
+                {
+                    Debug.LogError("Resolved anchor is null. Cannot spawn directions.");
+                    return;
+                }
+
+                for (int i = 1; i < loadedRoute.directions.Count; i++)
+                {
+                    Direction direction = loadedRoute.directions[i];
+
+                    Vector3 relativePosition = new Vector3(direction.position.x, direction.position.y, direction.position.z);
+                    Quaternion relativeRotation = new Quaternion(direction.rotation.x, direction.rotation.y, direction.rotation.z, direction.rotation.w);
+
+                    GameObject prefab = directionPresets.getDirection(direction.DirectionType);
+                    if (prefab != null)
+                    {
+                        GameObject instance = Instantiate(prefab, resolvedAnchor.transform);
+                        instance.transform.localPosition = relativePosition;
+                        instance.transform.localRotation = relativeRotation;
+
+                        Debug.Log($"Spawned {direction.DirectionType} at relative position {relativePosition}");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Prefab not found for direction type: {direction.DirectionType}");
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to load route or route does not exist.");
+            }
+        });
     }
 
 }

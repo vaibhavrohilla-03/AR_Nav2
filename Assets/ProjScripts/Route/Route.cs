@@ -6,13 +6,11 @@ using UnityEngine;
 public class Route
 {
     public string RouteName;
-    public string HostedAnchorid;
     public List<Direction> directions;
 
     public Route(string routename) 
     {
         RouteName = routename;
-        HostedAnchorid = "";
         directions = new List<Direction>();
     }
 
@@ -20,8 +18,6 @@ public class Route
     {
         directions.Add(direction);
     }
-
-
     public void RemoveDirection()
     {
         if(directions.Count > 0)

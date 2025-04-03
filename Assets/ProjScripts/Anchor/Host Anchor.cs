@@ -17,6 +17,8 @@ public class HostAnchor : MonoBehaviour
 
     public QRGenerator QRgenerator;
     public DirectionManager directionManager;
+    public MakeRoute Router;
+    public FirebaseManager firebaseManager;
     private void Start()
     {
         if (ARcontroller.Instance == null)
@@ -35,11 +37,15 @@ public class HostAnchor : MonoBehaviour
     public void Hostanchor()
     {
 
-        StartCoroutine(tryhostinganchor((bool success) => {
+        StartCoroutine(tryhostinganchor((bool success) => 
+        {
             if (success)
-            {
-                QRgenerator.MakeQRfromkey(cloudanchorID);
+            {   
+                Route route = Router.GetCurrentRoute();
+                QRgenerator.MakeQRfromkey(cloudanchorID,route.RouteName);
+                firebaseManager.SaveRoute(cloudanchorID);
                 Debug.Log("MadeQRcheckdevice  hosting completed");
+                Debug.Log("route saved with routed " + cloudanchorID);
             }
             else
             {
