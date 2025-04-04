@@ -91,7 +91,7 @@ public class HostAnchor : MonoBehaviour
             {
                 cloudanchorID = hostAnchorPromise.Result.CloudAnchorId;
                 Debug.Log("Cloud Anchor hosted successfully with ID: " + cloudanchorID);
-               // CopyToAndroidClipboard(cloudanchorID);
+               //CopyToAndroidClipboard(cloudanchorID);
                 
                 Oncompleted?.Invoke(true);
             }
