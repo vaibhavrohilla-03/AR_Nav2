@@ -34,12 +34,8 @@ public class DirectionManager : MonoBehaviour
             GameObject directionmodel = selecteddirection.AddintoScene(directionpresets, position, Quaternion.identity);
             anchor = directionmodel.AddComponent<ARAnchor>();
             Debug.Log("anchor placed with anchor id" + anchor.trackableId);
-            StartCoroutine(InitializeRouteName(routename =>
-            {
-                Router.InitializeRoute(routename);
-            }));
-            
-            Router.AddRouteDirections(selecteddirection,position);
+
+            StartCoroutine(InitializeRouteAndAddDirection(selecteddirection, position));
         }
         else
         {
@@ -64,19 +60,31 @@ public class DirectionManager : MonoBehaviour
             Router.AddRouteDirections(selecteddirection, relativePosition);
         }
     }
-    private IEnumerator InitializeRouteName(System.Action<string> RouteName)
-    {   
+    private IEnumerator InitializeRouteAndAddDirection(Direction direction, Vector3 position)
+    {
         field.popinputField();
+
+        // Wait until input is received
         yield return new WaitUntil(() => field.Isreceived());
 
+        string routeName = "Default";
         if (!string.IsNullOrEmpty(field.userInput))
         {
-            RouteName?.Invoke(field.userInput);
+            routeName = field.userInput;
+            Debug.Log("Route name set to: " + routeName);
         }
         else
         {
-            Debug.Log("Empty input received");
+            Debug.Log("No input received, using default name");
         }
+
+        // Initialize the route first
+        Router.InitializeRoute(routeName);
+
+
+        // Now that the route is initialized, add the direction
+        Router.AddRouteDirections(direction, position);
+        Debug.Log("Start direction added to route: " + routeName);
 
         field.closeinputField();
     }
