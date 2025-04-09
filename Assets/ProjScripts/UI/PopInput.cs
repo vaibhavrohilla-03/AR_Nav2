@@ -14,9 +14,11 @@ public class PopInput : MonoBehaviour
     [HideInInspector] public string userInput = "";
     private bool isEditorTesting = false;
 
+    public GameObject StartButton;
+
     public void Start()
     {
-        // Check if we're in the editor
+      
 #if UNITY_EDITOR
         isEditorTesting = true;
 #endif
@@ -98,7 +100,7 @@ public class PopInput : MonoBehaviour
                 }
                 else if (keyboard.status == TouchScreenKeyboard.Status.Canceled)
                 {
-                    // User canceled input
+                   
                     Debug.Log("Input canceled");
                     break;
                 }
@@ -120,5 +122,9 @@ public class PopInput : MonoBehaviour
             inputReceived = true;
             Debug.Log("Input submitted manually in Editor: " + userInput);
         }
+    }
+    public void DisableStartButton()
+    {
+        StartButton.SetActive(false);
     }
 }

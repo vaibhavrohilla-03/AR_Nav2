@@ -1491,6 +1491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Inputfield: {fileID: 268012404}
   userInput: 
+  StartButton: {fileID: 1718870466}
 --- !u!1 &292684298
 GameObject:
   m_ObjectHideFlags: 0

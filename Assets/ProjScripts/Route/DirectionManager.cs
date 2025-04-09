@@ -36,6 +36,7 @@ public class DirectionManager : MonoBehaviour
             Debug.Log("anchor placed with anchor id" + anchor.trackableId);
 
             StartCoroutine(InitializeRouteAndAddDirection(selecteddirection, position));
+            field.DisableStartButton();
         }
         else
         {
@@ -64,7 +65,7 @@ public class DirectionManager : MonoBehaviour
     {
         field.popinputField();
 
-        // Wait until input is received
+       
         yield return new WaitUntil(() => field.Isreceived());
 
         string routeName = "Default";
@@ -78,11 +79,11 @@ public class DirectionManager : MonoBehaviour
             Debug.Log("No input received, using default name");
         }
 
-        // Initialize the route first
+        
         Router.InitializeRoute(routeName);
 
 
-        // Now that the route is initialized, add the direction
+        
         Router.AddRouteDirections(direction, position);
         Debug.Log("Start direction added to route: " + routeName);
 

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Directions
   m_EditorClassIdentifier: 
   Start: {fileID: 2434248831902721366, guid: 5d465eefa5bc1284291ed84ce7798aa5, type: 3}
-  DirectionLeft: {fileID: 3784058904901040678, guid: e436682f279340e49bc0b28a611185b3,
+  DirectionLeft: {fileID: 7216935916606505887, guid: 93101d16d5a3f7f439a422c8d1db9385,
     type: 3}
-  DirectionRight: {fileID: 96119444325948560, guid: e46ac7bb27cbabd4da6b64452bfcd360,
+  DirectionRight: {fileID: 2492073554589601896, guid: bc3f8e4340e981d47a27410a041f69f3,
     type: 3}
   DirectionStraight: {fileID: 1460928156419452877, guid: c46a1adcc03c0ac41afc3ae0b88a62b6,
     type: 3}
