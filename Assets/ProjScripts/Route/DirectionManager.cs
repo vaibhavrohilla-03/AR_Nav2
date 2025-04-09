@@ -54,10 +54,10 @@ public class DirectionManager : MonoBehaviour
             }
 
             GameObject directionmodel = selecteddirection.AddintoSceneasChild(directionpresets, position, Quaternion.identity, startObject);
-            Vector3 relativePosition = startObject.transform.InverseTransformPoint(position);
+            //Vector3 relativePosition = startObject.transform.InverseTransformPoint(position);
 
-            Debug.Log("Direction placed relative to start: " + relativePosition);
-            Router.AddRouteDirections(selecteddirection, relativePosition);
+            Debug.Log("Direction placed relative to start: " + directionmodel.transform.localPosition);
+            Router.AddRouteDirections(selecteddirection, directionmodel.transform.localPosition); 
         }
     }
     private IEnumerator InitializeRouteAndAddDirection(Direction direction, Vector3 position)

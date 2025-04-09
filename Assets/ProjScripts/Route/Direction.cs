@@ -34,7 +34,9 @@ public class Direction
     public GameObject AddintoSceneasChild(Directions preset, Vector3 position, Quaternion rotation, GameObject parent)
     {
         GameObject instance = Object.Instantiate(preset.getDirection(DirectionType), position, rotation);
-        instance.transform.SetParent(parent.transform, worldPositionStays: false);
+        instance.transform.SetParent(parent.transform);
+        Vector3 localposition  = parent.transform.InverseTransformPoint(position);
+        instance.transform.localPosition = localposition;
         this.position = new DirectionPosition(instance.transform.localPosition);
         this.rotation = new DirectionRotation(instance.transform.localRotation);
 
