@@ -15,38 +15,79 @@ public class QRScanner : MonoBehaviour
     private static string RouteKey;
     public ResolveAnchor Anchorresolve;
 
+    private bool gotQR= false;
+    private bool anchorResolved = false;
+    private bool waitingToResolve = false;
+    private int retryCooldown = 30;
+    private int lastAttemptFrame = -30;
+
     public ARCameraManager cameraManager;
     private void Start()
     {
         barcodeReader = new BarcodeReader();
         cameraManager.frameReceived += OnCameraFrameReceived;
     }
-
-
     public void OnCameraFrameReceived(ARCameraFrameEventArgs args)
     {
         if ((Time.frameCount % 15) != 0)
             return;
+
+        if (anchorResolved)
+        {
+            cameraManager.frameReceived -= OnCameraFrameReceived;
+            return;
+        }
+
         if (cameraManager.TryAcquireLatestCpuImage(out XRCpuImage cpuImage))
         {
-            StartCoroutine(ProcessQRcode(cpuImage, (resultText) =>
+            if (!gotQR)
             {
-                RouteKey = resultText;
-                Debug.Log("resolve initiated" + "with routekey" + RouteKey);
+                StartCoroutine(ProcessQRcode(cpuImage, (resultText) =>
+                {
+                    if (string.IsNullOrEmpty(RouteKey))
+                    {
+                        RouteKey = resultText;
+                    }
+                    Debug.Log("QR code scanned with route key: " + RouteKey);
+                },
+                (found) =>
+                {
+                    if (found && !string.IsNullOrEmpty(RouteKey))
+                    {
+                        Debug.Log("QR Code detected!");
+                        gotQR = true;
+                        waitingToResolve = true;
+                        lastAttemptFrame = Time.frameCount - retryCooldown; // allow immediate first resolve
+                    }
+                }));
 
-                Anchorresolve.StartResolveAnchor(RouteKey);
-                
-                
 
-            },
-            (found) =>
-            {
-                Debug.Log("QR Code detected: " + found);
             }
-            ));
-            
+            else if (waitingToResolve && Time.frameCount - lastAttemptFrame >= retryCooldown)
+            {
+                lastAttemptFrame = Time.frameCount;
+                Debug.Log("Attempting to resolve anchor for RouteKey: " + RouteKey);
+                Anchorresolve.StartResolveAnchor(RouteKey, success =>
+                {
+                    if (success)
+                    {
+                        anchorResolved = true;
+                        waitingToResolve = false;
+                        Debug.Log("Anchor resolved successfully.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Anchor resolve failed. Will retry...");
+                    }
+                });
+            }
+            else
+            {
+                cpuImage.Dispose(); // prevent leak if skipped
+            }
         }
     }
+
 
     private IEnumerator ProcessQRcode(XRCpuImage image, System.Action<string> key, System.Action<bool> isthere)
     {
@@ -81,8 +122,8 @@ public class QRScanner : MonoBehaviour
         if (result != null)
         {
             Debug.Log("QR Code Detected: " + result.Text);
-            isthere?.Invoke(true);
             key?.Invoke(result.Text);
+            isthere?.Invoke(true);
         }
         else
         {

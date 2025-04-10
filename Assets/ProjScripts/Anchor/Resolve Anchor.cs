@@ -18,17 +18,21 @@ public class ResolveAnchor : MonoBehaviour
         controller = ARcontroller.Instance;
     }
 
-    public void StartResolveAnchor(string hostanchorid)
+    public void StartResolveAnchor(string hostanchorid,System.Action<bool> oncompleted)
     {
         StartCoroutine(resolvingAnchor(hostanchorid, success =>
         {
             if (success && resolvedAnchor != null)
-            {
+            {   
+                oncompleted?.Invoke(success);
                 firebasemanager.LoadRoute(hostanchorid,resolvedAnchor.gameObject);
+                
             }
             else
             {
                 Debug.LogError("Failed to resolve anchor. Route loading skipped.");
+
+               
             }
         }));
     }
