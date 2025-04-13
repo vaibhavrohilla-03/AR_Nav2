@@ -20,11 +20,12 @@ public class ResolveAnchor : MonoBehaviour
 
     public void StartResolveAnchor(string hostanchorid,System.Action<bool> oncompleted)
     {
-        StartCoroutine(resolvingAnchor(hostanchorid, success =>
+        StartCoroutine(resolvingAnchor(hostanchorid, (success) =>
         {
             if (success && resolvedAnchor != null)
             {   
                 oncompleted?.Invoke(success);
+                Debug.Log("anchor resolved and success invoked");
                 firebasemanager.LoadRoute(hostanchorid,resolvedAnchor.gameObject);
                 
             }

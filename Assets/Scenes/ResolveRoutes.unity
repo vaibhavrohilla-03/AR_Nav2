@@ -325,6 +325,8 @@ Transform:
   m_Children:
   - {fileID: 412346478}
   - {fileID: 1505567439}
+  - {fileID: 733522055}
+  - {fileID: 451705069}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &199581099
@@ -728,6 +730,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayrect: {fileID: 415309015}
   displaytext: {fileID: 159403329}
+--- !u!1 &451705068
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 451705069}
+  - component: {fileID: 451705070}
+  m_Layer: 0
+  m_Name: makeroute
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &451705069
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 451705068}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 171621337}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &451705070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 451705068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 939100f7104a92e46923719872a4f2a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &473952603
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -925,6 +971,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 613829830}
   m_CullTransparentMesh: 1
+--- !u!1 &733522054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 733522055}
+  - component: {fileID: 733522056}
+  m_Layer: 0
+  m_Name: firebasemanager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &733522055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733522054}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 861.7174, y: -493.89297, z: 509.58643}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 171621337}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &733522056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733522054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 174f538875a2d394e9b638009219fbf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Router: {fileID: 451705070}
+  directionPresets: {fileID: 11400000, guid: eadef84e4a117814db7b5622cd2d5e0d, type: 2}
+  OnFirebaseInitialize:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &779896146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1214,6 +1309,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eed666c0bb72e40488716450bafcee74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  firebasemanager: {fileID: 733522056}
 --- !u!1 &1795388983 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7346884537188875106, guid: e14080c8ee69a4a4b9008df999130acc,

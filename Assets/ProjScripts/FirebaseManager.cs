@@ -13,7 +13,7 @@ public class FirebaseManager : MonoBehaviour
 
     public Directions directionPresets;
 
-    [HideInInspector]public UnityEvent OnFirebaseInitialize = new UnityEvent();
+    //[HideInInspector]public UnityEvent OnFirebaseInitialize = new UnityEvent();
 
     private void Awake()
     {
@@ -45,7 +45,7 @@ public class FirebaseManager : MonoBehaviour
             Debug.Log("Firebase Initialized");
             DBReference = FirebaseDatabase.DefaultInstance.RootReference; 
             Debug.Log(DBReference.Database.App.Options.DatabaseUrl);
-            OnFirebaseInitialize.Invoke();
+            //OnFirebaseInitialize.Invoke();
         });
     }
     public void SaveRoute(string cloudanchorid)
@@ -58,13 +58,33 @@ public class FirebaseManager : MonoBehaviour
 
     public void LoadRoute(string cloudanchorid,GameObject resolvedAnchor)
     {
-        DBReference.Child("Routes").Child(cloudanchorid).GetValueAsync().ContinueWith(task =>
+        Debug.Log("function invoked");
+        DBReference.Child("Routes").Child(cloudanchorid).GetValueAsync().ContinueWithOnMainThread(task =>
         {
+            Debug.Log($"Firebase task status: IsCompleted={task.IsCompleted}, IsFaulted={task.IsFaulted}, IsCanceled={task.IsCanceled}");
+
+            if (task.Result.Exists)
+            {
+                Debug.Log("Route data exists.");
+            }
+            else
+            {
+                Debug.LogWarning("Route data does NOT exist for this anchor.");
+                Debug.Log("Raw snapshot JSON: " + task.Result.GetRawJsonValue());
+            }
+
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogError("Firebase task failed or was canceled.");
+                if (task.Exception != null)
+                    Debug.LogError(task.Exception.ToString());
+            }
+            
             if (task.IsCompleted && task.Result.Exists)
             {
                 string json = task.Result.GetRawJsonValue();
                 Route loadedRoute = JsonUtility.FromJson<Route>(json);
-
+                Debug.Log("loaded route -> " + json);
                 if (resolvedAnchor == null)
                 {
                     Debug.LogError("Resolved anchor is null. Cannot spawn directions.");
@@ -81,7 +101,8 @@ public class FirebaseManager : MonoBehaviour
                     GameObject prefab = directionPresets.getDirection(direction.DirectionType);
                     if (prefab != null)
                     {
-                        GameObject instance = Instantiate(prefab, resolvedAnchor.transform);
+                        GameObject instance = Instantiate(prefab);
+                        instance.transform.SetParent(resolvedAnchor.transform,false);
                         instance.transform.localPosition = relativePosition;
                         instance.transform.localRotation = relativeRotation;
 
