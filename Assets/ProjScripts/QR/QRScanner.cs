@@ -12,7 +12,7 @@ public class QRScanner : MonoBehaviour
     private IBarcodeReader barcodeReader;
     private Texture2D cameraTexture;
     private Texture2D ARcameratexture;
-    private static string RouteKey;
+    private static string AnchorKey;
     public ResolveAnchor Anchorresolve;
 
     private bool gotQR= false;
@@ -22,6 +22,7 @@ public class QRScanner : MonoBehaviour
     private int lastAttemptFrame = -30;
 
     public ARCameraManager cameraManager;
+    public FirebaseManager firebaseManager;
     private void Start()
     {
         barcodeReader = new BarcodeReader();
@@ -44,15 +45,15 @@ public class QRScanner : MonoBehaviour
             {
                 StartCoroutine(ProcessQRcode(cpuImage, (resultText) =>
                 {
-                    if (string.IsNullOrEmpty(RouteKey))
+                    if (string.IsNullOrEmpty(AnchorKey))
                     {
-                        RouteKey = resultText;
+                        AnchorKey = resultText;
                     }
-                    Debug.Log("QR code scanned with route key: " + RouteKey);
+                    Debug.Log("QR code scanned with anchor key: " + AnchorKey);
                 },
                 (found) =>
                 {
-                    if (found && !string.IsNullOrEmpty(RouteKey))
+                    if (found && !string.IsNullOrEmpty(AnchorKey))
                     {
                         Debug.Log("QR Code detected!");
                         gotQR = true;
@@ -66,14 +67,15 @@ public class QRScanner : MonoBehaviour
             else if (waitingToResolve && Time.frameCount - lastAttemptFrame >= retryCooldown)
             {
                 lastAttemptFrame = Time.frameCount;
-                Debug.Log("Attempting to resolve anchor for RouteKey: " + RouteKey);
-                Anchorresolve.StartResolveAnchor(RouteKey, success =>
+                Debug.Log("Attempting to resolve anchor for anchorKey: " + AnchorKey);
+                Anchorresolve.StartResolveAnchor(AnchorKey, success =>
                 {
                     if (success)
                     {
                         anchorResolved = true;
                         waitingToResolve = false;
                         Debug.Log("Anchor resolved successfully.");
+
                     }
                     else
                     {

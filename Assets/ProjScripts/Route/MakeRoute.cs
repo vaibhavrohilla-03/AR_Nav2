@@ -7,18 +7,22 @@ public class MakeRoute : MonoBehaviour
 {
     private  Route CurrentRoute;
 
-    public void InitializeRoute(string RouteName)
+    public void InitializeRoute(string RouteName,List<Direction> directionlist)
     {
-        CurrentRoute = new Route(RouteName);
+        CurrentRoute = new Route(RouteName,directionlist);
     }
-    public void AddRouteDirections(Direction direction,Vector3 position)
+    public void AddRouteDirections(Direction direction)
     {
         CurrentRoute.AddDirection(direction);
-        direction.position = new DirectionPosition(position);
     }
 
     public Route GetCurrentRoute()
     {
         return CurrentRoute;
+    }
+
+    public void ClearCurrentRoute()
+    {
+        CurrentRoute = null;
     }
 }

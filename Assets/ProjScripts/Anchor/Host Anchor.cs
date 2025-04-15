@@ -11,9 +11,12 @@ public class HostAnchor : MonoBehaviour
     private HostCloudAnchorResult hostingresult;
     private HostCloudAnchorPromise hostAnchorPromise;
     private ARcontroller controller;
+    private UIController UIController;
     private ARAnchor placedanchor;
-    [HideInInspector]public static string cloudanchorID;
+    public  string cloudanchorID;
     private FeatureMapQuality mapQuality;
+    public string startpointName;
+
 
     public QRGenerator QRgenerator;
     public DirectionManager directionManager;
@@ -27,6 +30,7 @@ public class HostAnchor : MonoBehaviour
             return;
         }
         controller = ARcontroller.Instance;
+        UIController = UIController.Instance;
         mapQuality = FeatureMapQuality.Insufficient;
         if(QRgenerator == null)
         {
@@ -36,24 +40,41 @@ public class HostAnchor : MonoBehaviour
 
     public void Hostanchor()
     {
-
-        StartCoroutine(tryhostinganchor((bool success) => 
+        StartCoroutine(tryhostinganchor((bool success) =>
         {
             if (success)
-            {   
-                Route route = Router.GetCurrentRoute();
-                QRgenerator.MakeQRfromkey(cloudanchorID,route.RouteName);
-                firebaseManager.SaveRoute(cloudanchorID);
-                Debug.Log("MadeQRcheckdevice  hosting completed");
-                Debug.Log("route saved with routed " + cloudanchorID);
+            {
+                UIController.OpeninputField();
+                StartCoroutine(UIController.Instance.WaitUntillInput(
+                    inputtext =>
+                    {
+                        Debug.Log(inputtext);
+                    },
+                    onComplete =>
+                    {
+                        if (onComplete)
+                        {
+                            QRgenerator.MakeQRfromkey(cloudanchorID,UIController.UserInput);
+                            firebaseManager.SaveStartingPoint(UIController.UserInput, cloudanchorID);
+                            Debug.Log("MadeQR check device  hosting completed");
+                            Debug.Log("start saved with routed " + cloudanchorID);
+                            startpointName = UIController.UserInput;
+                            UIController.EnableButton(UIController.directionpanel.gameObject);
+                            UIController.EnableButton(UIController.AddDirectionButton);
+                            UIController.DisableButton(UIController.HostStartButton);
+                            UIController.CloseinputField();
+                            Debug.Log("enabled");
+                        }
+                    }
+                ));
             }
             else
             {
                 Debug.LogError("Anchor hosting failed.");
             }
         }));
-
     }
+
 
     public IEnumerator tryhostinganchor(System.Action<bool> Oncompleted)
     {
@@ -74,14 +95,16 @@ public class HostAnchor : MonoBehaviour
             yield break;
         }
 
-        
+        float checkInterval = 0.5f;
         while (mapQuality < FeatureMapQuality.Sufficient)
         {
             mapQuality = controller.AnchorManager.EstimateFeatureMapQualityForHosting(new Pose(Camera.main.transform.position,Camera.main.transform.rotation));
             Debug.Log(mapQuality.ToString());
-            yield return null;
+            yield return new WaitForSeconds(checkInterval);
         }
-       
+
+        Debug.Log("Trying hosting...");
+
         hostAnchorPromise = controller.AnchorManager.HostCloudAnchorAsync(placedanchor, 1);
         yield return hostAnchorPromise;
 
@@ -91,7 +114,7 @@ public class HostAnchor : MonoBehaviour
             {
                 cloudanchorID = hostAnchorPromise.Result.CloudAnchorId;
                 Debug.Log("Cloud Anchor hosted successfully with ID: " + cloudanchorID);
-               //CopyToAndroidClipboard(cloudanchorID);
+               
                 
                 Oncompleted?.Invoke(true);
             }
@@ -116,33 +139,6 @@ public class HostAnchor : MonoBehaviour
             yield return false;
         }
     }
-
-
-
-    //private void CopyToAndroidClipboard(string text)
-    //{
-    //    if (Application.platform == RuntimePlatform.Android)
-    //    {
-    //        using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-    //        using (AndroidJavaObject context = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-    //        using (AndroidJavaObject clipboardManager = context.Call<AndroidJavaObject>("getSystemService", "clipboard"))
-    //        using (AndroidJavaClass clipDataClass = new AndroidJavaClass("android.content.ClipData"))
-    //        using (AndroidJavaObject clipData = clipDataClass.CallStatic<AndroidJavaObject>("newPlainText", "label", text))
-    //        {
-    //            clipboardManager.Call("setPrimaryClip", clipData);
-    //            Debug.Log("Cloud Anchor ID copied to Android clipboard!");
-    //        }
-    //    }
-    //}
-
-    
-    //private AndroidJavaObject GetAndroidContext()
-    //{
-    //    using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-    //    {
-    //        return unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-    //    }
-    //}
 }
 
 

@@ -6,8 +6,14 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/ResolveRoutes.unity
-    guid: 7025fe87ced608541b22bc56dadac85a
+    path: Assets/Scenes/Menu.unity
+    guid: 0ad4f7071ec2c7b4e893323a23ac146d
+  - enabled: 1
+    path: Assets/Scenes/MakeRouteFinal.unity
+    guid: 986db48aaf06dac46874ce8e5fdb80fe
+  - enabled: 1
+    path: Assets/Scenes/LoadRouteFInal.unity
+    guid: 8aa892c6d6504434f892121ce42eda8c
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 6ee72d15cf39dd748a13eac57397b9af,
       type: 2}

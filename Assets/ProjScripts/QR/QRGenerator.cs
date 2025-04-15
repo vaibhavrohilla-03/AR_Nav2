@@ -8,7 +8,19 @@ public class QRGenerator : MonoBehaviour
 
     public void MakeQRfromkey(string key, string filename)
     {
-        Texture2D QR = generateQR(key); 
+        Texture2D QR = generateQR(key);
+        if (QR == null)
+        {
+            Debug.LogError("QR Texture generation failed!");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(key))
+        {
+            Debug.LogError("QR Key is null or empty");
+            return;
+        }
+
         SaveToGallery(QR,filename);
     }
 

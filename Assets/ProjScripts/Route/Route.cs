@@ -13,7 +13,11 @@ public class Route
         RouteName = routename;
         directions = new List<Direction>();
     }
-
+    public Route(string routename, List<Direction> directions)
+    {
+        RouteName = routename;
+        this.directions = directions;
+    }
     public void AddDirection(Direction direction)
     {
         directions.Add(direction);

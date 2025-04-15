@@ -50,40 +50,5 @@ public class ARcontroller : MonoBehaviour
         //Application.targetFrameRate = 60;
     }
 
-    //private void Start()
-    //{
-    //    StateofApplication = ApplicationState.Initial;
-    //    UpdateStates();
-    //}
-    //public void UpdateStates()
-    //{
-    //    switch (StateofApplication)
-    //    {
-    //        case ApplicationState.Initial:
-
-               
-    //            ARsetup.SetActive(false);
-                
-    //            break;
-
-    //        case ApplicationState.ARsession:
-
-    //            ARsetup.SetActive(true);
-                
-    //            break;
-
-    //        case ApplicationState.Scanning:
-    //            Debug.Log("logging featurepoints");
-    //            break;
-
-    //        case ApplicationState.Hosting:
-
-    //            break;
-    //        case ApplicationState.Hosted:
-                
-    //            break;
-    //        case ApplicationState.Resolving:
-    //            break;
-    //    }
-    //}
+  
 }

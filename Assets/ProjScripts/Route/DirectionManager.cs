@@ -10,15 +10,22 @@ public class DirectionManager : MonoBehaviour
     public Directions directionpresets;
     public DrawPlacer placer;
     public MakeRoute Router;
-    public PopInput field;
+    public FirebaseManager firebaseManager;
+    public HostAnchor hostedanchor;
+
     private Direction selecteddirection;
     private ARcontroller controller;
+    private UIController UIcontroller;
     [HideInInspector]public ARAnchor anchor;
+    private List<Direction> Directionslist = new List<Direction>();
+    private List<GameObject> placedDirectionModels = new List<GameObject>();
 
-    
+
+
     private void Start()
     {
         controller = ARcontroller.Instance;
+        UIcontroller = UIController.Instance;
     }
     public void selectDirection(int typeindex)
     {
@@ -26,67 +33,63 @@ public class DirectionManager : MonoBehaviour
         selecteddirection = new Direction(type);
         Debug.Log("direction Selected of type " +  type);
     }
+
+    public void makestart()
+    {
+        Vector3 position = placer.getplacerpos();
+        selectDirection(0);
+        GameObject startmodel = selecteddirection.AddintoScene(directionpresets,position,Quaternion.identity);
+        anchor = controller.AnchorManager.AttachAnchor(placer.getplane(),placer.getpose());
+        Debug.Log("anchor placed with anchor id" + anchor.trackableId);
+        UIcontroller.DisableButton(UIcontroller.MakeStartButton);
+        UIcontroller.EnableButton(UIcontroller.HostStartButton);
+
+    }
+
     public void Adddirection()
     {
         Vector3 position = placer.getplacerpos();
-        if(selecteddirection != null && selecteddirection.DirectionType == DirectionType.Start)
+        if (selecteddirection != null && selecteddirection.DirectionType == DirectionType.End)  
         {
-            GameObject directionmodel = selecteddirection.AddintoScene(directionpresets, position, Quaternion.identity);
-            anchor = directionmodel.AddComponent<ARAnchor>();
-            Debug.Log("anchor placed with anchor id" + anchor.trackableId);
-
-            StartCoroutine(InitializeRouteAndAddDirection(selecteddirection, position));
-            field.DisableStartButton();
+            UIcontroller.OpeninputField();
+            StartCoroutine(UIController.Instance.WaitUntillInput(
+                    inputtext =>
+                    {
+                        if(!String.IsNullOrEmpty(UIcontroller.UserInput))
+                        {
+                            Directionslist.Add(selecteddirection);
+                            Router.InitializeRoute(UIcontroller.UserInput,Directionslist);
+                            firebaseManager.SaveRoute(hostedanchor.startpointName, UIcontroller.UserInput, hostedanchor.cloudanchorID);
+                            UIcontroller.EnableButton(UIcontroller.MakeNewButton);
+                        }
+                    },
+                    onComplete =>
+                    {
+                        if (onComplete)
+                        {
+                            Debug.Log("route made successfully with route name " + UIcontroller.InputField.text);
+                        }
+                        else
+                            Debug.Log("input was cancelled or empty");
+                    }
+                ));
         }
         else
         {
-            if (Router.GetCurrentRoute() == null || Router.GetCurrentRoute().directions.Count == 0)
-            {
-                Debug.LogError("Start direction must be placed first.");
-                return;
-            }
-
-            Direction startDirection = Router.GetCurrentRoute().directions[0];
-            GameObject startObject = GameObject.FindWithTag("Start"); 
-            if (startObject == null)
-            {
-                Debug.LogError("Start object not found in scene.");
-                return;
-            }
-
-            GameObject directionmodel = selecteddirection.AddintoSceneasChild(directionpresets, position, Quaternion.identity, startObject);
-            //Vector3 relativePosition = startObject.transform.InverseTransformPoint(position);
-
+            GameObject directionmodel = selecteddirection.AddintoSceneasChild(directionpresets, position, Quaternion.identity, anchor.transform.gameObject);
             Debug.Log("Direction placed relative to start: " + directionmodel.transform.localPosition);
-            Router.AddRouteDirections(selecteddirection, directionmodel.transform.localPosition); 
+            Directionslist.Add(selecteddirection);
+            placedDirectionModels.Add(directionmodel);
         }
     }
-    private IEnumerator InitializeRouteAndAddDirection(Direction direction, Vector3 position)
+    public void ClearPreviousRoute()
     {
-        field.popinputField();
-
-       
-        yield return new WaitUntil(() => field.Isreceived());
-
-        string routeName = "Default";
-        if (!string.IsNullOrEmpty(field.userInput))
+        foreach (var model in placedDirectionModels)
         {
-            routeName = field.userInput;
-            Debug.Log("Route name set to: " + routeName);
-        }
-        else
-        {
-            Debug.Log("No input received, using default name");
+            Destroy(model);
         }
 
-        
-        Router.InitializeRoute(routeName);
-
-
-        
-        Router.AddRouteDirections(direction, position);
-        Debug.Log("Start direction added to route: " + routeName);
-
-        field.closeinputField();
+        placedDirectionModels.Clear();
+        Router.ClearCurrentRoute();
     }
 }

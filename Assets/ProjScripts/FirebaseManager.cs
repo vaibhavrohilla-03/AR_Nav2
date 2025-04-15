@@ -1,8 +1,10 @@
 using Firebase;
 using Firebase.Database;
 using Firebase.Extensions;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class FirebaseManager : MonoBehaviour
 {
@@ -12,6 +14,10 @@ public class FirebaseManager : MonoBehaviour
     public MakeRoute Router;
 
     public Directions directionPresets;
+
+    private List<GameObject> StoredDirections = new List<GameObject>();
+
+    private List<GameObject> storedButtons = new List<GameObject>();
 
     //[HideInInspector]public UnityEvent OnFirebaseInitialize = new UnityEvent();
 
@@ -48,77 +54,145 @@ public class FirebaseManager : MonoBehaviour
             //OnFirebaseInitialize.Invoke();
         });
     }
-    public void SaveRoute(string cloudanchorid)
+    public void SaveRoute(string startingpointName,string destination,string cloudanchorid)
     {
         Route route = Router.GetCurrentRoute();
+        if (route == null || string.IsNullOrEmpty(route.RouteName))
+        {
+            Debug.Log("current route is empty");
+            return;
+        }
         string json = JsonUtility.ToJson(route);
         Debug.Log(json);
-        DBReference.Child("Routes").Child(cloudanchorid).SetRawJsonValueAsync(json);
+
+
+        DBReference.Child("startingPoints").Child(cloudanchorid).Child(startingpointName).Child(destination).SetRawJsonValueAsync(json).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+                Debug.Log("Route saved under starting point: " + startingpointName);
+            else
+                Debug.LogError("Failed to save route: " + task.Exception);
+        }
+        );
     }
 
-    public void LoadRoute(string cloudanchorid,GameObject resolvedAnchor)
+    public void SaveStartingPoint(string startingPointName, string cloudAnchorID)
     {
-        Debug.Log("function invoked");
-        DBReference.Child("Routes").Child(cloudanchorid).GetValueAsync().ContinueWithOnMainThread(task =>
+        DatabaseReference reference = DBReference
+            .Child("startingPoints")   
+            .Child(cloudAnchorID)  
+            .Child(startingPointName);     
+
+        reference.SetValueAsync(true).ContinueWithOnMainThread(task =>
         {
-            Debug.Log($"Firebase task status: IsCompleted={task.IsCompleted}, IsFaulted={task.IsFaulted}, IsCanceled={task.IsCanceled}");
-
-            if (task.Result.Exists)
-            {
-                Debug.Log("Route data exists.");
-            }
+            if (task.IsCompleted)
+                Debug.Log($"Starting point '{startingPointName}' registered with anchor '{cloudAnchorID}'");
             else
-            {
-                Debug.LogWarning("Route data does NOT exist for this anchor.");
-                Debug.Log("Raw snapshot JSON: " + task.Result.GetRawJsonValue());
-            }
+                Debug.LogError("Failed to register starting point: " + task.Exception);
+        });
+    }
 
-            if (task.IsFaulted || task.IsCanceled)
+
+    public void LoadRouteForDestination(string cloudAnchorId, string startingPointName, string destinationName, GameObject resolvedAnchor)
+    {   
+
+
+
+        DBReference
+            .Child("startingPoints")
+            .Child(cloudAnchorId)
+            .Child(startingPointName)
+            .Child(destinationName)
+            .GetValueAsync()
+            .ContinueWithOnMainThread(task =>
             {
-                Debug.LogError("Firebase task failed or was canceled.");
-                if (task.Exception != null)
-                    Debug.LogError(task.Exception.ToString());
-            }
-            
-            if (task.IsCompleted && task.Result.Exists)
-            {
+                if (!task.IsCompleted || !task.Result.Exists)
+                {
+                    Debug.LogWarning("Route data missing or failed to load.");
+                    return;
+                }
+
                 string json = task.Result.GetRawJsonValue();
                 Route loadedRoute = JsonUtility.FromJson<Route>(json);
-                Debug.Log("loaded route -> " + json);
+
                 if (resolvedAnchor == null)
                 {
                     Debug.LogError("Resolved anchor is null. Cannot spawn directions.");
                     return;
                 }
 
-                for (int i = 1; i < loadedRoute.directions.Count; i++)
-                {
-                    Direction direction = loadedRoute.directions[i];
+                ClearList(StoredDirections);
 
-                    Vector3 relativePosition = new Vector3(direction.position.x, direction.position.y, direction.position.z);
-                    Quaternion relativeRotation = new Quaternion(direction.rotation.x, direction.rotation.y, direction.rotation.z, direction.rotation.w);
+                foreach (var direction in loadedRoute.directions)
+                {
+                    Vector3 relPos = new Vector3(direction.position.x, direction.position.y, direction.position.z);
+                    Quaternion relRot = new Quaternion(direction.rotation.x, direction.rotation.y, direction.rotation.z, direction.rotation.w);
 
                     GameObject prefab = directionPresets.getDirection(direction.DirectionType);
                     if (prefab != null)
                     {
                         GameObject instance = Instantiate(prefab);
-                        instance.transform.SetParent(resolvedAnchor.transform,false);
-                        instance.transform.localPosition = relativePosition;
-                        instance.transform.localRotation = relativeRotation;
+                        instance.transform.SetParent(resolvedAnchor.transform, false);
+                        instance.transform.localPosition = relPos;
+                        instance.transform.localRotation = relRot;
+                        StoredDirections.Add(instance);
 
-                        Debug.Log($"Spawned {direction.DirectionType} at relative position {relativePosition}");
+                        Debug.Log($"Spawned {direction.DirectionType} at {relPos}");
                     }
                     else
                     {
-                        Debug.LogError($"Prefab not found for direction type: {direction.DirectionType}");
+                        Debug.LogError($"Missing prefab for {direction.DirectionType}");
                     }
                 }
-            }
-            else
+            });
+    }
+
+    public void GetDestinations(string CloudAnchorID,GameObject resolvedanchor)
+    {
+        DatabaseReference reference = DBReference
+       .Child("startingPoints")
+       .Child(CloudAnchorID);
+
+
+        reference.GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.Result == null)
             {
-                Debug.LogError("Failed to load route or route does not exist.");
+                Debug.LogError("Failed to retrieve starting points.");
+                return;
             }
+
+            DataSnapshot anchorSnapshot = task.Result;
+
+            foreach(DataSnapshot startingpointsnap in anchorSnapshot.Children)
+            {
+                foreach (DataSnapshot destinationsnap in startingpointsnap.Children) 
+                {   
+                    string destinationName = destinationsnap.Key;
+                    GameObject instance = PopulatePanel.Instance.Addbutton(destinationName);
+                    storedButtons.Add(instance);
+
+                    Button button = instance.GetComponent<Button>();
+                    button.onClick.AddListener(() => LoadRouteForDestination(CloudAnchorID,startingpointsnap.Key,destinationName,resolvedanchor));
+
+                }
+            }
+
         });
     }
+
+    public void ClearList(List<GameObject> List)
+    {
+        if (List.Count > 0)
+        {
+            foreach (var go in List)
+            {
+                if (go != null)
+                    Destroy(go);
+            }
+            List.Clear();
+        }
+    }
+
 
 }

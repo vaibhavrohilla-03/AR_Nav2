@@ -26,7 +26,7 @@ public class ResolveAnchor : MonoBehaviour
             {   
                 oncompleted?.Invoke(success);
                 Debug.Log("anchor resolved and success invoked");
-                firebasemanager.LoadRoute(hostanchorid,resolvedAnchor.gameObject);
+                firebasemanager.GetDestinations(hostanchorid, resolvedAnchor.gameObject);
                 
             }
             else
@@ -81,6 +81,11 @@ public class ResolveAnchor : MonoBehaviour
             Debug.LogError("Unexpected PromiseState: " + resolveAnchorPromise.State);
             Oncompleted?.Invoke(false);
         }
+    }
+
+    public GameObject getresolvedanchor()
+    {
+        return resolvedAnchor.gameObject;
     }
    
 }
