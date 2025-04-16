@@ -28,7 +28,7 @@ public class PopulatePanel : MonoBehaviour
     public GameObject Addbutton(string text)
     {
         GameObject instance = Instantiate(ButtonPrefab);
-        instance.transform.SetParent(Panel);
+        instance.transform.SetParent(Panel,false);
         instance.transform.localPosition = NextPos;
         NextPos.y -= padding_plusWidth;
 

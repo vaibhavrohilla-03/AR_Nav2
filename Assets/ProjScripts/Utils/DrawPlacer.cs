@@ -19,16 +19,35 @@ public class DrawPlacer : MonoBehaviour
     private ARPlane plane;
     private void Start()
     {
-        controller = ARcontroller.Instance;
+        if (controller == null)
+            controller = ARcontroller.Instance;
+
+        if (controller == null)
+        {
+            Debug.LogWarning("ARcontroller.Instance is null in DrawPlacer Start()");
+            return;
+        }
+
+
+
         hitList = new List<ARRaycastHit>();
         placer = Instantiate(PlacerPrefab);
         hitposition = placer.transform.position + (placer.transform.forward * 2f) ;
         hitrotation = placer.transform.rotation ;
+
+
     }
 
     private void Update()
     {
-        if(castray(out hitposition, out hitrotation))
+        if (controller == null)
+        {
+            controller = ARcontroller.Instance;
+            if (controller == null)
+                return;
+        }
+
+        if (castray(out hitposition, out hitrotation))
         {
             placer.transform.position = Vector3.Lerp(placer.transform.position, hitposition , Time.deltaTime * 10f);
             placer.transform.rotation = Quaternion.Lerp(placer.transform.rotation, hitrotation, Time.deltaTime * 10f);

@@ -41,14 +41,29 @@ public class ARcontroller : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); 
         }
         else
         {
             Destroy(gameObject); 
         }
+        ;
         //Application.targetFrameRate = 60;
     }
 
-  
+    private void InitializeManagers()
+    {
+        // Look for managers in the active scene
+        Session = FindObjectOfType<ARSession>();
+        PlaneManager = FindObjectOfType<ARPlaneManager>();
+        RaycastManager = FindObjectOfType<ARRaycastManager>();
+        AnchorManager = FindObjectOfType<ARAnchorManager>();
+        PointCloudManager = FindObjectOfType<ARPointCloudManager>();
+
+        if (Session == null) Debug.LogWarning("ARSession not found in scene.");
+        if (PlaneManager == null) Debug.LogWarning("ARPlaneManager not found in scene.");
+        if (RaycastManager == null) Debug.LogWarning("ARRaycastManager not found in scene.");
+        if (AnchorManager == null) Debug.LogWarning("ARAnchorManager not found in scene.");
+        if (PointCloudManager == null) Debug.LogWarning("ARPointCloudManager not found in scene.");
+    }
+
 }

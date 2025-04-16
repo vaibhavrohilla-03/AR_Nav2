@@ -641,6 +641,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fa559af76aa1f3449689800d597125e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cloudanchorID: 
+  startpointName: 
   QRgenerator: {fileID: 1627897290}
   directionManager: {fileID: 1445394644}
   Router: {fileID: 1530548328}
@@ -3561,7 +3563,8 @@ MonoBehaviour:
   directionpresets: {fileID: 11400000, guid: eadef84e4a117814db7b5622cd2d5e0d, type: 2}
   placer: {fileID: 2214129419126271380}
   Router: {fileID: 1530548328}
-  field: {fileID: 268012407}
+  firebaseManager: {fileID: 1852470815}
+  hostedanchor: {fileID: 120886265}
   anchor: {fileID: 0}
 --- !u!1 &1469517126
 GameObject:
@@ -4521,10 +4524,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Router: {fileID: 1530548328}
-  directionPresets: {fileID: 0}
-  OnFirebaseInitialize:
-    m_PersistentCalls:
-      m_Calls: []
+  directionPresets: {fileID: 11400000, guid: eadef84e4a117814db7b5622cd2d5e0d, type: 2}
 --- !u!1 &1854164975
 GameObject:
   m_ObjectHideFlags: 0

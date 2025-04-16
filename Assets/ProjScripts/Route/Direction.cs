@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -40,6 +41,11 @@ public class Direction
 
         return instance;
 
+    }
+
+    public void UpdateRotation(Quaternion p_rotation)
+    {
+        this.rotation = new DirectionRotation(p_rotation);
     }
 }
 

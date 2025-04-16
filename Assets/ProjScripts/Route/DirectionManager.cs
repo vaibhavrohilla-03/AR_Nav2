@@ -20,18 +20,41 @@ public class DirectionManager : MonoBehaviour
     private List<Direction> Directionslist = new List<Direction>();
     private List<GameObject> placedDirectionModels = new List<GameObject>();
 
+    private GameObject previewDirectionModel;
 
+    private GameObject directionmodel;
+
+    private Quaternion currentRotation = Quaternion.identity;
+
+    [SerializeField] private Material transparentMaterial;
 
     private void Start()
     {
         controller = ARcontroller.Instance;
         UIcontroller = UIController.Instance;
     }
+    private void Update()
+    {
+        HandleRotationGesture();
+    }
+
     public void selectDirection(int typeindex)
     {
         DirectionType type = (DirectionType)typeindex;
         selecteddirection = new Direction(type);
         Debug.Log("direction Selected of type " +  type);
+
+        if(type == 0)
+        {
+            return;
+        }
+
+        if (previewDirectionModel != null)
+            Destroy(previewDirectionModel);
+
+        Vector3 pos = placer.getplacerpos();
+        previewDirectionModel = selecteddirection.AddintoScene(directionpresets, pos, currentRotation);
+        MaterialHelper.ApplyTransparentMaterial(previewDirectionModel,transparentMaterial);
     }
 
     public void makestart()
@@ -57,16 +80,33 @@ public class DirectionManager : MonoBehaviour
                     {
                         if(!String.IsNullOrEmpty(UIcontroller.UserInput))
                         {
+                            
+
                             Directionslist.Add(selecteddirection);
                             Router.InitializeRoute(UIcontroller.UserInput,Directionslist);
                             firebaseManager.SaveRoute(hostedanchor.startpointName, UIcontroller.UserInput, hostedanchor.cloudanchorID);
                             UIcontroller.EnableButton(UIcontroller.MakeNewButton);
+
+                            
+
+                            Debug.Log("Direction placed relative to start: " + directionmodel.transform.localPosition);
+                            
+                            placedDirectionModels.Add(directionmodel);
                         }
                     },
                     onComplete =>
                     {
                         if (onComplete)
                         {
+                            directionmodel = selecteddirection.AddintoSceneasChild(
+                            directionpresets,
+                            previewDirectionModel.transform.position,
+                            previewDirectionModel.transform.rotation,
+                            anchor.transform.gameObject);
+
+                            Destroy(previewDirectionModel);
+                            previewDirectionModel = null;
+
                             Debug.Log("route made successfully with route name " + UIcontroller.InputField.text);
                         }
                         else
@@ -76,10 +116,22 @@ public class DirectionManager : MonoBehaviour
         }
         else
         {
-            GameObject directionmodel = selecteddirection.AddintoSceneasChild(directionpresets, position, Quaternion.identity, anchor.transform.gameObject);
+            directionmodel = selecteddirection.AddintoSceneasChild(
+                directionpresets,
+                previewDirectionModel.transform.position,
+                previewDirectionModel.transform.rotation,
+                anchor.transform.gameObject);
+
+            Destroy(previewDirectionModel);
+            previewDirectionModel = null;
+
             Debug.Log("Direction placed relative to start: " + directionmodel.transform.localPosition);
             Directionslist.Add(selecteddirection);
             placedDirectionModels.Add(directionmodel);
+        }
+        if(selecteddirection == null)
+        {
+            Debug.Log("no selected direction");
         }
     }
     public void ClearPreviousRoute()
@@ -91,5 +143,36 @@ public class DirectionManager : MonoBehaviour
 
         placedDirectionModels.Clear();
         Router.ClearCurrentRoute();
+    }
+
+
+    private void HandleRotationGesture()
+    {
+        if (previewDirectionModel == null)
+            return;
+
+        
+        previewDirectionModel.transform.position = placer.getplacerpos();
+
+        if (Input.touchCount == 2)
+        {
+            Touch touch0 = Input.GetTouch(0);
+            Touch touch1 = Input.GetTouch(1);
+
+            Vector2 prevTouch0 = touch0.position - touch0.deltaPosition;
+            Vector2 prevTouch1 = touch1.position - touch1.deltaPosition;
+
+            float prevAngle = Mathf.Atan2(prevTouch1.y - prevTouch0.y, prevTouch1.x - prevTouch0.x) * Mathf.Rad2Deg;
+            float currentAngle = Mathf.Atan2(touch1.position.y - touch0.position.y, touch1.position.x - touch0.position.x) * Mathf.Rad2Deg;
+
+            float angleDelta = currentAngle - prevAngle;
+
+           
+
+            currentRotation *= Quaternion.Euler(0, angleDelta, 0);
+            Debug.Log($"Updated Current Rotation: {currentRotation.eulerAngles}");
+
+            previewDirectionModel.transform.rotation = currentRotation;
+        }
     }
 }

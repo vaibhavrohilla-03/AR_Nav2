@@ -164,20 +164,39 @@ public class FirebaseManager : MonoBehaviour
 
             DataSnapshot anchorSnapshot = task.Result;
 
-            foreach(DataSnapshot startingpointsnap in anchorSnapshot.Children)
+            DataSnapshot firstStartingPointSnap = null;
+            foreach (DataSnapshot snap in anchorSnapshot.Children)
             {
-                foreach (DataSnapshot destinationsnap in startingpointsnap.Children) 
-                {   
-                    string destinationName = destinationsnap.Key;
-                    GameObject instance = PopulatePanel.Instance.Addbutton(destinationName);
-                    storedButtons.Add(instance);
-
-                    Button button = instance.GetComponent<Button>();
-                    button.onClick.AddListener(() => LoadRouteForDestination(CloudAnchorID,startingpointsnap.Key,destinationName,resolvedanchor));
-
-                }
+                firstStartingPointSnap = snap;
+                break;
             }
 
+            if (firstStartingPointSnap == null)
+            {
+                Debug.LogWarning("No starting points found.");
+                return;
+            }
+
+            string startingPointName = firstStartingPointSnap.Key;
+
+            int testincreament = 0;
+            foreach (DataSnapshot destinationsnap in firstStartingPointSnap.Children) 
+            {
+                Debug.Log($"Found destination key: {destinationsnap.Key}");
+
+                if (string.IsNullOrEmpty(destinationsnap.Key)) continue;
+
+                string destinationName = destinationsnap.Key;
+                GameObject instance = PopulatePanel.Instance.Addbutton(destinationName);
+                storedButtons.Add(instance);
+                Button button = instance.GetComponent<Button>();
+                string capturedDestination = destinationName;
+                button.onClick.AddListener(() => LoadRouteForDestination(CloudAnchorID, startingPointName,capturedDestination, resolvedanchor));
+
+                Debug.Log("loop called for " + testincreament+"th"+" time");
+                testincreament++;
+            }
+            
         });
     }
 

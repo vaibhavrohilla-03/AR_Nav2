@@ -150,15 +150,15 @@ RectTransform:
   m_GameObject: {fileID: 16014485}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.39999998, y: 0.39999998, z: 0.39999998}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 339612016}
   m_Father: {fileID: 1034696130}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -197.2, y: 398}
+  m_AnchoredPosition: {x: -343.23, y: 560.7}
   m_SizeDelta: {x: 160, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &16014487
@@ -317,7 +317,7 @@ RectTransform:
   m_GameObject: {fileID: 153740800}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.64, y: 0.64, z: 0.64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 180981859}
@@ -326,7 +326,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -440, y: -228}
+  m_AnchoredPosition: {x: -683.7, y: -359.36}
   m_SizeDelta: {x: 220.7301, y: 727.2997}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &153740802
@@ -341,7 +341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d5b5667c24dbcb45b8f59cc8c556db6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Openpos: {x: -440, y: -15}
+  Openpos: {x: -683.7, y: 0}
   curve: 27
 --- !u!1 &159403327
 GameObject:
@@ -1865,7 +1865,7 @@ PrefabInstance:
         type: 3}
       propertyPath: placer
       value: 
-      objectReference: {fileID: 1795388986}
+      objectReference: {fileID: 0}
     - target: {fileID: 3570955978962456627, guid: e14080c8ee69a4a4b9008df999130acc,
         type: 3}
       propertyPath: ARsetup
@@ -1914,11 +1914,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7346884537188875106, guid: e14080c8ee69a4a4b9008df999130acc,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1795388986}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e14080c8ee69a4a4b9008df999130acc, type: 3}
 --- !u!1 &546249569
 GameObject:
@@ -3008,7 +3004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -3028,7 +3024,7 @@ Canvas:
   m_GameObject: {fileID: 1034696126}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -4012,29 +4008,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Panel: {fileID: 268594224}
-  initialPos: {x: -8, y: 257, z: 0}
-  padding_plusWidth: 160
+  initialPos: {x: -3.1, y: 257, z: 0}
+  padding_plusWidth: 162
   ButtonPrefab: {fileID: 7942821706325145228, guid: 95aae99c97809414e80242630ddbe14b,
     type: 3}
---- !u!1 &1795388983 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7346884537188875106, guid: e14080c8ee69a4a4b9008df999130acc,
-    type: 3}
-  m_PrefabInstance: {fileID: 473952603}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1795388986
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1795388983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 012418708faffc3448c02baaf59b9021, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  placerUI: {fileID: 0}
 --- !u!1 &1809255340
 GameObject:
   m_ObjectHideFlags: 0
@@ -4422,7 +4399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 268594224}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.5
