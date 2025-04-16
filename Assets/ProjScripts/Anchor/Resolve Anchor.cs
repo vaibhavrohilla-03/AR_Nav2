@@ -11,6 +11,7 @@ public class ResolveAnchor : MonoBehaviour
     private ResolveCloudAnchorPromise resolveAnchorPromise;
     private ARCloudAnchor resolvedAnchor;
     private ARcontroller controller;
+    private bool alreadyresolved = false;
 
     public FirebaseManager firebasemanager;
     private void Start()
@@ -22,8 +23,9 @@ public class ResolveAnchor : MonoBehaviour
     {
         StartCoroutine(resolvingAnchor(hostanchorid, (success) =>
         {
-            if (success && resolvedAnchor != null)
+            if (success && resolvedAnchor != null && !alreadyresolved)
             {   
+                alreadyresolved = true;
                 oncompleted?.Invoke(success);
                 Debug.Log("anchor resolved and success invoked");
                 firebasemanager.GetDestinations(hostanchorid, resolvedAnchor.gameObject);
